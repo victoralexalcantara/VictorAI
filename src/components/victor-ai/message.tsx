@@ -135,8 +135,8 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
     >
       {isAssistant && (
         <Avatar className="w-8 h-8">
-          <AvatarFallback className='bg-primary/20'>
-            <Bot className="w-5 h-5 text-primary" />
+          <AvatarFallback className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 animate-gradient">
+            <Bot className="w-5 h-5 text-white" />
           </AvatarFallback>
         </Avatar>
       )}

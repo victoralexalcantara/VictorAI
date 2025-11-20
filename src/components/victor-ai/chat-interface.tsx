@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useTransition } from 'react';
-import { SendHorizonal, Loader, Stars, X, Plus, Mic, Wand2, Square } from 'lucide-react';
+import { SendHorizonal, Loader, X, Plus, Mic, Square, Stars } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -22,9 +22,7 @@ type FilePreview = {
   type: string;
 };
 
-// Este es el componente principal para la interfaz de chat.
 export function ChatInterface() {
-  // Estados para manejar los mensajes, la entrada del usuario y el estado de carga.
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
@@ -43,13 +41,11 @@ export function ChatInterface() {
   } = useSpeechToText();
   const prevIsPending = useRef(isPending);
 
-  // Efecto para manejar el texto transcrito
   useEffect(() => {
     if (transcript) {
       setInput(prev => prev ? `${prev} ${transcript}` : transcript);
-      // Automatically focus and adjust height after transcription
       const textarea = textareaRef.current;
-      if(textarea){
+      if (textarea) {
         textarea.focus();
         setTimeout(() => {
           textarea.style.height = 'auto';
@@ -59,7 +55,6 @@ export function ChatInterface() {
     }
   }, [transcript]);
 
-  // Efecto para mostrar errores de la API de voz
   useEffect(() => {
     if (speechError) {
       toast({
@@ -70,7 +65,6 @@ export function ChatInterface() {
     }
   }, [speechError, toast]);
 
-  // Efecto para hacer scroll hacia abajo cuando llegan nuevos mensajes.
   useEffect(() => {
     if (scrollAreaRef.current && scrollAreaRef.current.viewport) {
       const viewport = scrollAreaRef.current.viewport;
@@ -78,7 +72,6 @@ export function ChatInterface() {
     }
   }, [messages]);
 
-  // Efecto para poner el foco en el textarea al cargar o cuando la IA termina de responder.
   useEffect(() => {
     if (prevIsPending.current && !isPending) {
       textareaRef.current?.focus();
@@ -86,15 +79,12 @@ export function ChatInterface() {
     prevIsPending.current = isPending;
   }, [isPending]);
 
-  // Efecto para poner el foco en el textarea al cargar la página por primera vez.
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
 
   const handleFileProcessing = (file: File) => {
     if (!file || isPending) return;
-
-    // Leemos el archivo como un Data URI.
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -109,7 +99,6 @@ export function ChatInterface() {
     };
   }
 
-  // Maneja el envío del formulario (cuando el usuario envía un mensaje).
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e && e.preventDefault) e.preventDefault();
     if ((!input.trim() && filePreviews.length === 0) || isPending) return;
@@ -117,11 +106,10 @@ export function ChatInterface() {
     const userInput = input;
     const currentFiles = [...filePreviews];
 
-    // Limpiamos el input y la vista previa
     setInput('');
     setFilePreviews([]);
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Reset height
+      textareaRef.current.style.height = 'auto';
     }
 
     let userMessageContent = userInput;
@@ -138,15 +126,13 @@ export function ChatInterface() {
     startTransition(async () => {
       try {
         let aiResponse: string;
-
         const historyForAI = messages
-            .filter(m => m.role === 'user' || m.role === 'assistant')
-            .map(({ role, content }) => ({ role, content }));
-            
-        historyForAI.push({role: 'user', content: userMessage.content})
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .map(({ role, content }) => ({ role, content }));
+        historyForAI.push({ role: 'user', content: userMessage.content })
 
         if (currentFiles.length > 0) {
-          const fileProcessingPromises = currentFiles.map(file => 
+          const fileProcessingPromises = currentFiles.map(file =>
             uploadAndProcessFile(file.dataUri, file.type)
           );
           const results = await Promise.all(fileProcessingPromises);
@@ -154,7 +140,7 @@ export function ChatInterface() {
 
           if (userInput.trim()) {
             const combinedInput = `Basado en los siguientes archivos (${currentFiles.map(f => f.name).join(', ')}):\n${summaries}\n\nResponde a lo siguiente: ${userInput}`;
-            aiResponse = await getAiResponse(combinedInput, historyForAI.slice(0, -1)); // Pass history without the last user message as it is combined
+            aiResponse = await getAiResponse(combinedInput, historyForAI.slice(0, -1));
           } else {
             const fileSummaries = results.map((result, index) => `Archivo "${currentFiles[index].name}" procesado.\n**Resumen:**\n${result.summary}`).join('\n\n');
             aiResponse = `${fileSummaries}\n\nAhora puedes hacer preguntas sobre estos archivos.`;
@@ -186,17 +172,14 @@ export function ChatInterface() {
     setFilePreviews(prev => prev.filter(file => file.id !== id));
   };
 
-  // Maneja la subida de archivos.
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach(handleFileProcessing);
     }
-    // Limpiamos el input de archivo para poder subir el mismo archivo de nuevo.
     e.target.value = '';
   };
 
-  // Maneja el evento de presionar Enter para enviar el mensaje, y Shift+Enter para nueva línea.
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -206,10 +189,9 @@ export function ChatInterface() {
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-    // Hacemos que el textarea crezca automáticamente con el contenido.
     const textarea = e.target;
-    textarea.style.height = 'auto'; // Reset the height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Set to scroll height
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
   }
 
   const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -225,7 +207,7 @@ export function ChatInterface() {
         }
       }
     }
-    if(filesFound) {
+    if (filesFound) {
       e.preventDefault();
     }
   };
@@ -258,112 +240,100 @@ export function ChatInterface() {
           ))}
         </div>
       </ScrollArea>
-      <div className="px-4 py-3 border-t border-border/50 bg-background">
-        <div className="max-w-4xl mx-auto relative">
-          <form onSubmit={handleSubmit} className="relative">
-            <div className="flex flex-col w-full bg-card border border-border/50 rounded-2xl p-2 sm:p-3 gap-2">
-              
-              {filePreviews.length > 0 && (
-                <div className='flex gap-2 overflow-x-auto pb-2'>
-                  {filePreviews.map((file) => (
-                    <div key={file.id} className='relative w-24 h-24 border rounded-md p-1 bg-card shrink-0'>
-                      <Image src={file.dataUri} alt={file.name} fill={true} style={{ objectFit: "cover" }} className="rounded-sm" />
-                      <Button
-                        type='button'
-                        variant='ghost'
-                        size='icon'
-                        className='absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive/80 text-destructive-foreground hover:bg-destructive'
-                        onClick={() => removeFile(file.id)}
-                      >
-                        <X className='h-4 w-4' />
-                        <span className='sr-only'>Quitar archivo</span>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+      <div className="max-w-4xl mx-auto relative w-full px-4 pb-3 pt-1">
+        <form onSubmit={handleSubmit} className="relative">
+          <div className="flex flex-col w-full bg-black border border-border/50 rounded-3xl p-3 sm:p-4 gap-3">
 
-              <Textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleTextareaInput}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-                placeholder="Pregúntale a VictorAI..."
-                className="w-full resize-none bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-base md:text-sm max-h-96 overflow-y-auto"
-                rows={1}
-                disabled={isPending}
-              />
+            {filePreviews.length > 0 && (
+              <div className='flex gap-2 overflow-x-auto pb-2'>
+                {filePreviews.map((file) => (
+                  <div key={file.id} className='relative w-24 h-24 border rounded-md p-1 bg-card shrink-0'>
+                    <Image src={file.dataUri} alt={file.name} fill={true} style={{ objectFit: "cover" }} className="rounded-sm" />
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      size='icon'
+                      className='absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive/80 text-destructive-foreground hover:bg-destructive'
+                      onClick={() => removeFile(file.id)}
+                    >
+                      <X className='h-4 w-4' />
+                      <span className='sr-only'>Quitar archivo</span>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
 
-              <div className="flex items-center justify-between h-9">
-                <div className="flex items-center gap-0">
+            <Textarea
+              ref={textareaRef}
+              value={input}
+              onChange={handleTextareaInput}
+              onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+              placeholder="Pregúntarle a Gemini..."
+              className="w-full resize-none bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-base md:text-sm max-h-96 overflow-y-auto"
+              rows={1}
+              disabled={isPending}
+            />
+
+            <div className="flex items-center justify-between h-9">
+              <div className="flex items-center gap-0">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full text-muted-foreground"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isPending}
+                >
+                  <Plus className="w-5 h-5" />
+                  <span className="sr-only">Subir archivo</span>
+                </Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept="image/*,application/pdf,.txt,.doc,.docx"
+                  multiple
+                />
+              </div>
+
+              <div className="flex items-center gap-1">
+                {isPending ? (
+                  <Button size="icon" className="h-9 w-9 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 animate-gradient disabled:opacity-50" disabled>
+                    <Loader className="w-5 h-5 animate-spin text-white" />
+                    <span className="sr-only">Procesando</span>
+                  </Button>
+                ) : showSendButton ? (
+                  <Button type="submit" size="icon" className="h-9 w-9 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 animate-gradient text-white" >
+                    <SendHorizonal className="w-5 h-5" />
+                    <span className="sr-only">Enviar</span>
+                  </Button>
+                ) : (
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full text-muted-foreground"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isPending}
+                    className={cn(
+                      "h-9 w-9 rounded-full text-muted-foreground",
+                      isRecording ? "bg-red-500/20 text-red-500" : "animate-pulse-glow",
+                    )}
+                    onClick={handleMicClick}
                   >
-                    <Plus className="w-5 h-5" />
-                    <span className="sr-only">Subir archivo</span>
+                    {isRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
+                    <span className="sr-only">{isRecording ? "Detener grabación" : "Usar micrófono"}</span>
                   </Button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept="image/*,application/pdf,.txt,.doc,.docx"
-                    multiple
-                  />
-                  
-                   <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full gap-2 text-muted-foreground"
-                      disabled={isPending}
-                    >
-                      <Wand2 className="w-5 h-5" />
-                      <span className="hidden sm:inline">Herramientas</span>
-                    </Button>
-                </div>
-
-                <div className="flex items-center">
-                  {isPending ? (
-                     <Button size="icon" className="h-9 w-9 rounded-full bg-primary disabled:bg-primary/50" disabled>
-                        <Loader className="w-5 h-5 animate-spin" />
-                        <span className="sr-only">Procesando</span>
-                     </Button>
-                  ) : showSendButton ? (
-                    <Button type="submit" size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-primary/90" >
-                      <SendHorizonal className="w-5 h-5" />
-                      <span className="sr-only">Enviar</span>
-                    </Button>
-                  ) : (
-                    <Button 
-                      type="button" 
-                      variant="ghost"
-                      size="icon" 
-                      className={cn(
-                        "h-9 w-9 rounded-full text-muted-foreground",
-                        isRecording && "bg-red-500/20 text-red-500 animate-pulse"
-                      )}
-                      onClick={handleMicClick}
-                    >
-                      {isRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
-                      <span className="sr-only">{isRecording ? "Detener grabación" : "Usar micrófono"}</span>
-                    </Button>
-                  )}
-                </div>
+                )}
               </div>
             </div>
-          </form>
-          <div className="text-xs text-muted-foreground text-center mt-2 flex items-center justify-center gap-2">
-            <Stars className="w-3 h-3" />
-            <span>VictorAI puede cometer errores. Considera verificar la información importante.</span>
           </div>
-        </div>
+        </form>
+        <br></br>
+        {/*<div className="text-xs text-muted-foreground text-center mt-2 flex items-center justify-center gap-2">
+          <Stars className="w-3 h-3" style={{ color: '#FFD700' }} />
+          <span>VictorAI puede cometer errores. Considera verificar la información importante.</span>
+        </div>*/}
       </div>
     </div>
   );

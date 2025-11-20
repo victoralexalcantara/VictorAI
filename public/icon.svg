@@ -1,5 +1,11 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="512" height="512" rx="100" fill="hsl(36 100% 50%)"/>
-<path d="M164.5 144L238 368L256.5 304L275 368L347.5 144" stroke="hsl(36 100% 10%)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M200 248H312" stroke="hsl(36 100% 10%)" stroke-width="30" stroke-linecap="round"/>
+<svg width="256" height="256" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="34" cy="34" r="34" fill="black"/>
+    <g fill="#FBC02D">
+        <!-- Main star, with curves to match your image -->
+        <path d="M34,19.9C37.5,28 40,30.5 48.5,34C40,37.5 37.5,40 34,48.1C30.5,40 28,37.5 19.5,34C28,30.5 30.5,28 34,19.9Z"/>
+        <!-- Plus sign, top-right -->
+        <path d="M51 21V23H53V25H51V27H49V25H47V23H49V21H51Z"/>
+        <!-- Smaller sparkle, bottom-left -->
+        <path d="M21 45L23 47L21 49L19 47L21 45Z"/>
+    </g>
 </svg>
