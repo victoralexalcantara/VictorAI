@@ -40,6 +40,11 @@
   * {
     @apply border-border;
   }
+  html, body, #__next {
+    height: 100vh; /* Fallback for older browsers */
+    height: 100dvh; /* Fallback for modern browsers that don't run the JS */
+    height: var(--viewport-height, 100dvh);
+  }
   body {
     @apply bg-background text-foreground;
   }

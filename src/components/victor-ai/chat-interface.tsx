@@ -232,7 +232,7 @@ export function ChatInterface() {
   const showSendButton = input.trim().length > 0 || filePreviews.length > 0;
 
   return (
-    <div className="flex flex-col flex-1 h-full max-h-[calc(100vh-65px)] bg-background">
+    <div className="flex flex-col flex-1 min-h-0 bg-background">
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="max-w-4xl mx-auto w-full">
           {currentMessages.map((msg) => (
@@ -270,7 +270,7 @@ export function ChatInterface() {
               onChange={handleTextareaInput}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
-              placeholder="Pregúntarle a Gemini..."
+              placeholder="Pregúntale a VictorAI"
               className="w-full resize-none bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-base md:text-sm max-h-96 overflow-y-auto"
               rows={1}
               disabled={isPending}
