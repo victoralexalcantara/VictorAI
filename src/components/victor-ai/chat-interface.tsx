@@ -45,7 +45,7 @@ export function ChatInterface() {
     if (transcript) {
       setInput(prev => prev ? `${prev} ${transcript}` : transcript);
       const textarea = textareaRef.current;
-      if (textarea) {
+      if(textarea){
         textarea.focus();
         setTimeout(() => {
           textarea.style.height = 'auto';
@@ -127,12 +127,12 @@ export function ChatInterface() {
       try {
         let aiResponse: string;
         const historyForAI = messages
-          .filter(m => m.role === 'user' || m.role === 'assistant')
-          .map(({ role, content }) => ({ role, content }));
-        historyForAI.push({ role: 'user', content: userMessage.content })
+            .filter(m => m.role === 'user' || m.role === 'assistant')
+            .map(({ role, content }) => ({ role, content }));
+        historyForAI.push({role: 'user', content: userMessage.content})
 
         if (currentFiles.length > 0) {
-          const fileProcessingPromises = currentFiles.map(file =>
+          const fileProcessingPromises = currentFiles.map(file => 
             uploadAndProcessFile(file.dataUri, file.type)
           );
           const results = await Promise.all(fileProcessingPromises);
@@ -207,7 +207,7 @@ export function ChatInterface() {
         }
       }
     }
-    if (filesFound) {
+    if(filesFound) {
       e.preventDefault();
     }
   };
@@ -243,7 +243,7 @@ export function ChatInterface() {
       <div className="max-w-4xl mx-auto relative w-full px-4 pb-3 pt-1">
         <form onSubmit={handleSubmit} className="relative">
           <div className="flex flex-col w-full bg-black border border-border/50 rounded-3xl p-3 sm:p-4 gap-3">
-
+            
             {filePreviews.length > 0 && (
               <div className='flex gap-2 overflow-x-auto pb-2'>
                 {filePreviews.map((file) => (
@@ -301,20 +301,20 @@ export function ChatInterface() {
 
               <div className="flex items-center gap-1">
                 {isPending ? (
-                  <Button size="icon" className="h-9 w-9 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 animate-gradient disabled:opacity-50" disabled>
-                    <Loader className="w-5 h-5 animate-spin text-white" />
-                    <span className="sr-only">Procesando</span>
-                  </Button>
+                   <Button size="icon" className="h-9 w-9 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 animate-gradient disabled:opacity-50" disabled>
+                      <Loader className="w-5 h-5 animate-spin text-white" />
+                      <span className="sr-only">Procesando</span>
+                   </Button>
                 ) : showSendButton ? (
                   <Button type="submit" size="icon" className="h-9 w-9 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 animate-gradient text-white" >
                     <SendHorizonal className="w-5 h-5" />
                     <span className="sr-only">Enviar</span>
                   </Button>
                 ) : (
-                  <Button
-                    type="button"
+                  <Button 
+                    type="button" 
                     variant="ghost"
-                    size="icon"
+                    size="icon" 
                     className={cn(
                       "h-9 w-9 rounded-full text-muted-foreground",
                       isRecording ? "bg-red-500/20 text-red-500" : "animate-pulse-glow",
@@ -329,7 +329,6 @@ export function ChatInterface() {
             </div>
           </div>
         </form>
-        <br></br>
         {/*<div className="text-xs text-muted-foreground text-center mt-2 flex items-center justify-center gap-2">
           <Stars className="w-3 h-3" style={{ color: '#FFD700' }} />
           <span>VictorAI puede cometer errores. Considera verificar la información importante.</span>

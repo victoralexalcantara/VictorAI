@@ -1,0 +1,17 @@
+<svg width="256" height="256" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="icon-gradient-circle" x1="0" y1="0" x2="68" y2="68" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FBBF24"/>
+            <stop offset="1" stop-color="#F97316"/>
+        </linearGradient>
+    </defs>
+    <circle cx="34" cy="34" r="34" fill="url(#icon-gradient-circle)"/>
+    <g fill="white">
+        <!-- Main star, inspired by your image -->
+        <path d="M34,19.9C37.5,28 40,30.5 48.5,34C40,37.5 37.5,40 34,48.1C30.5,40 28,37.5 19.5,34C28,30.5 30.5,28 34,19.9Z"/>
+        <!-- Plus sign -->
+        <path d="M53.5,25 L53.5,28 L50.5,28 L50.5,31 L47.5,31 L47.5,28 L44.5,28 L44.5,25 L47.5,25 L47.5,22 L50.5,22 L50.5,25 L53.5,25Z"/>
+        <!-- Smaller sparkle -->
+        <path d="M22,42.5 L24,44.5 L22,46.5 L20,44.5 L22,42.5Z"/>
+    </g>
+</svg>
