@@ -1,10 +1,10 @@
 'use server';
 /**
- * @fileOverview This file contains the text-to-speech flow using Genkit.
+ * @fileOverview Este archivo contiene el flujo de texto a voz usando Genkit.
  *
- * - textToSpeech - A function that converts text to speech.
- * - TextToSpeechInput - The input type for the textToSpeech function.
- * - TextToSpeechOutput - The return type for the textToSpeech function.
+ * - textToSpeech - Una función que convierte texto a voz.
+ * - TextToSpeechInput - El tipo de entrada para la función textToSpeech.
+ * - TextToSpeechOutput - El tipo de retorno para la función textToSpeech.
  */
 
 import {ai} from '@/ai/genkit';
@@ -16,7 +16,7 @@ const TextToSpeechInputSchema = z.string();
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
 const TextToSpeechOutputSchema = z.object({
-  media: z.string().describe('The base64 encoded WAV audio data URI.'),
+  media: z.string().describe('La URI de datos de audio WAV codificada en base64.'),
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
 
@@ -73,7 +73,7 @@ const textToSpeechFlow = ai.defineFlow(
       prompt: query,
     });
     if (!media) {
-      throw new Error('no media returned');
+      throw new Error('no se devolvieron medios');
     }
     const audioBuffer = Buffer.from(
       media.url.substring(media.url.indexOf(',') + 1),

@@ -40,7 +40,7 @@ const transcribeAudioPrompt = ai.definePrompt({
   name: 'transcribeAudioPrompt',
   input: {schema: TranscribeAudioInputSchema},
   output: {schema: TranscribeAudioOutputSchema},
-  prompt: `Transcribe the following audio, considering the context provided. If there is no context, make the best transcription possible. Output should be only the transcribed text. Context: {{{context}}}\n\nAudio: {{media url=audioDataUri}}`,
+  prompt: `Transcribe the following audio. If context is provided, use it to improve accuracy. Your response must be only the transcribed text, without any formatting or timestamps.\n\nContext: {{{context}}}\n\nAudio: {{media url=audioDataUri}}`,
 });
 
 const transcribeAudioFlow = ai.defineFlow(

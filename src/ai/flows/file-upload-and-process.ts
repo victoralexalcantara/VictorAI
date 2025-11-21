@@ -1,12 +1,12 @@
 'use server';
 
 /**
- * @fileOverview This flow processes uploaded files (text, documents, images) to extract content and provide insights.
- *  It also handles different file types and provides tailored processing for each.
+ * @fileOverview Este flujo procesa archivos subidos (texto, documentos, imágenes) para extraer contenido y proporcionar información.
+ *  También maneja diferentes tipos de archivos y proporciona un procesamiento adaptado para cada uno.
  *
- * - processFile - A function that handles file processing and content extraction.
- * - FileUploadInput - The input type for the processFile function.
- * - FileUploadOutput - The return type for the processFile function.
+ * - processFile - Una función que maneja el procesamiento de archivos y la extracción de contenido.
+ * - FileUploadInput - El tipo de entrada para la función processFile.
+ * - FileUploadOutput - El tipo de retorno para la función processFile.
  */
 
 import {ai} from '@/ai/genkit';
@@ -16,17 +16,17 @@ const FileUploadInputSchema = z.object({
   fileDataUri: z
     .string()
     .describe(
-      'The uploaded file data as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.' // Corrected the expected format
+      "Los datos del archivo subido como una URI de datos que debe incluir un tipo MIME y usar codificación Base64. Formato esperado: 'data:<mimetype>;base64,<encoded_data>'."
     ),
-  mimeType: z.string().describe('MIME type of the uploaded file.'),
+  mimeType: z.string().describe('Tipo MIME del archivo subido.'),
 });
 
 export type FileUploadInput = z.infer<typeof FileUploadInputSchema>;
 
 const FileUploadOutputSchema = z.object({
   extractedText:
-    z.string().describe('The extracted text content from the uploaded file.'),
-  summary: z.string().describe('A summary of the file content.'),
+    z.string().describe('El contenido de texto extraído del archivo subido.'),
+  summary: z.string().describe('Un resumen del contenido del archivo.'),
 });
 
 export type FileUploadOutput = z.infer<typeof FileUploadOutputSchema>;
@@ -39,13 +39,13 @@ const fileUploadAndProcessPrompt = ai.definePrompt({
   name: 'fileUploadAndProcessPrompt',
   input: {schema: FileUploadInputSchema},
   output: {schema: FileUploadOutputSchema},
-  prompt: `You are an AI assistant that analyzes the content of uploaded files, including text, documents and images. You will extract content and provide a summary.
+  prompt: `Eres un asistente de IA que analiza el contenido de los archivos subidos, incluyendo texto, documentos e imágenes. Extraerás el contenido y proporcionarás un resumen.
 
-  The file has the following MIME type: {{{mimeType}}}.
+  El archivo tiene el siguiente tipo MIME: {{{mimeType}}}.
 
-  Here is the file content: {{media url=fileDataUri}}
+  Aquí está el contenido del archivo: {{media url=fileDataUri}}
 
-  Summary:
+  Resumen:
   `,
 });
 
