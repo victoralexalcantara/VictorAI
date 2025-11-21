@@ -142,7 +142,8 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
       )}
       <div
         className={cn(
-          'max-w-xl lg:max-w-3xl text-sm md:text-base',
+          // Se agregó la clase `break-words` para asegurar que el texto se ajuste y no se desborde.
+          'max-w-xl lg:max-w-3xl text-sm md:text-base break-words',
           isAssistant ? '' : 'rounded-lg px-4 py-3 bg-primary/20'
         )}
       >

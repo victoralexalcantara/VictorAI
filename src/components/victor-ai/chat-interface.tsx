@@ -12,6 +12,7 @@ import type { ChatMessage } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useTextToSpeech } from '@/hooks/use-text-to-speech';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
+import { useMobile } from '@/hooks/use-mobile';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -40,12 +41,13 @@ export function ChatInterface() {
     error: speechError,
   } = useSpeechToText();
   const prevIsPending = useRef(isPending);
+  const isMobile = useMobile();
 
   useEffect(() => {
     if (transcript) {
       setInput(prev => prev ? `${prev} ${transcript}` : transcript);
       const textarea = textareaRef.current;
-      if(textarea){
+      if(textarea && !isMobile){
         textarea.focus();
         setTimeout(() => {
           textarea.style.height = 'auto';
@@ -53,7 +55,7 @@ export function ChatInterface() {
         }, 0);
       }
     }
-  }, [transcript]);
+  }, [transcript, isMobile]);
 
   useEffect(() => {
     if (speechError) {
@@ -73,15 +75,17 @@ export function ChatInterface() {
   }, [messages]);
 
   useEffect(() => {
-    if (prevIsPending.current && !isPending) {
+    if (prevIsPending.current && !isPending && !isMobile) {
       textareaRef.current?.focus();
     }
     prevIsPending.current = isPending;
-  }, [isPending]);
+  }, [isPending, isMobile]);
 
   useEffect(() => {
-    textareaRef.current?.focus();
-  }, []);
+    if (!isMobile) {
+        textareaRef.current?.focus();
+    }
+  }, [isMobile]);
 
   const handleFileProcessing = (file: File) => {
     if (!file || isPending) return;
@@ -136,13 +140,13 @@ export function ChatInterface() {
             uploadAndProcessFile(file.dataUri, file.type)
           );
           const results = await Promise.all(fileProcessingPromises);
-          const summaries = results.map((result, index) => `Resumen de "${currentFiles[index].name}": ${result.summary}`).join('\n');
+          const summaries = results.map((result, index) => `Resumen de \"${currentFiles[index].name}\": ${result.summary}`).join('\n');
 
           if (userInput.trim()) {
             const combinedInput = `Basado en los siguientes archivos (${currentFiles.map(f => f.name).join(', ')}):\n${summaries}\n\nResponde a lo siguiente: ${userInput}`;
             aiResponse = await getAiResponse(combinedInput, historyForAI.slice(0, -1));
           } else {
-            const fileSummaries = results.map((result, index) => `Archivo "${currentFiles[index].name}" procesado.\n**Resumen:**\n${result.summary}`).join('\n\n');
+            const fileSummaries = results.map((result, index) => `Archivo \"${currentFiles[index].name}\" procesado.\n**Resumen:**\n${result.summary}`).join('\n\n');
             aiResponse = `${fileSummaries}\n\nAhora puedes hacer preguntas sobre estos archivos.`;
           }
         } else {
@@ -163,7 +167,9 @@ export function ChatInterface() {
         });
         setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessage.id && msg.id !== userMessage.id));
       } finally {
-        textareaRef.current?.focus();
+        if (!isMobile) {
+            textareaRef.current?.focus();
+        }
       }
     });
   };
