@@ -66,7 +66,7 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
       return (
         <>
           {fileAttachment && <p className="text-sm text-muted-foreground italic mb-2">{fileAttachment}</p>}
-          {textContent && <p className="whitespace-pre-wrap">{textContent}</p>}
+          {textContent && <p className="whitespace-pre-wrap break-words">{textContent}</p>}
         </>
       )
     }
@@ -97,7 +97,7 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
                 Copiar
               </Button>
             </div>
-            <pre className="p-4 text-sm overflow-x-auto"><code className={`language-${language}`}>{code}</code></pre>
+            <pre className="p-4 text-sm whitespace-pre-wrap break-words"><code className={`language-${language}`}>{code}</code></pre>
           </div>
         );
       }
@@ -111,7 +111,7 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
           <ListTag key={index} className={cn('list-inside my-2 pl-4', ListTag === 'ol' ? 'list-decimal' : 'list-disc')}>
             {items.map((item, itemIndex) => {
               const content = item.replace(/^\s*([*-]|\d+\.)\s/, '');
-              return <li key={itemIndex} className="mb-1">{renderTextWithMath(content)}</li>;
+              return <li key={itemIndex} className="mb-1 whitespace-pre-wrap break-words">{renderTextWithMath(content)}</li>;
             })}
           </ListTag>
         );
@@ -119,7 +119,7 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
 
       // Párrafos normales (con soporte para LaTeX y negritas)
       return (
-        <p key={index} className="whitespace-pre-wrap my-2">
+        <p key={index} className="whitespace-pre-wrap my-2 break-words">
           {renderTextWithMath(block)}
         </p>
       );
@@ -142,9 +142,8 @@ export function Message({ message, onPlayAudio, isSpeaking, speakingId }: Messag
       )}
       <div
         className={cn(
-          // Se agregó la clase `break-words` para asegurar que el texto se ajuste y no se desborde.
-          'max-w-xl lg:max-w-3xl text-sm md:text-base break-words',
-          isAssistant ? '' : 'rounded-lg px-4 py-3 bg-primary/20'
+          'flex-1 min-w-0 max-w-xl lg:max-w-3xl text-sm md:text-base',
+          isUser && 'text-right'
         )}
       >
         {message.isProcessing ? (
