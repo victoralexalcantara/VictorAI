@@ -335,10 +335,10 @@ export function ChatInterface() {
             </div>
           </div>
         </form>
-        {/*<div className="text-xs text-muted-foreground text-center mt-2 flex items-center justify-center gap-2">
+        <div className="text-xs text-muted-foreground text-center mt-2 flex items-center justify-center gap-2">
           <Stars className="w-3 h-3" style={{ color: '#FFD700' }} />
           <span>VictorAI puede cometer errores. Considera verificar la información importante.</span>
-        </div>*/}
+        </div>
       </div>
     </div>
   );
